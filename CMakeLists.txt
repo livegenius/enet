@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.14)
 
 project(enet)
 
@@ -18,11 +18,7 @@ check_struct_has_member("struct msghdr" "msg_flags" "sys/types.h;sys/socket.h" H
 set(CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" "sys/socket.h")
 check_type_size("socklen_t" HAS_SOCKLEN_T BUILTIN_TYPES_ONLY)
 unset(CMAKE_EXTRA_INCLUDE_FILES)
-if(MSVC)
-	add_definitions(-W3)
-else()
-	add_definitions(-Wno-error)
-endif()
+
 
 if(HAS_FCNTL)
     add_definitions(-DHAS_FCNTL=1)
@@ -55,7 +51,6 @@ if(HAS_SOCKLEN_T)
     add_definitions(-DHAS_SOCKLEN_T=1)
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(INCLUDE_FILES_PREFIX include/enet)
 set(INCLUDE_FILES
@@ -89,6 +84,16 @@ add_library(enet STATIC
     ${SOURCE_FILES}
 )
 
-if (MINGW)
+target_compile_definitions(enet PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
+target_include_directories(enet PUBLIC ${PROJECT_SOURCE_DIR}/include)
+
+
+if (WIN32)
     target_link_libraries(enet winmm ws2_32)
+endif()
+
+if(MSVC)
+    target_compile_options(enet PRIVATE -W3)
+else()
+    target_compile_options(enet PRIVATE -Wno-error)
 endif()
