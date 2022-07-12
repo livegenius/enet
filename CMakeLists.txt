@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-cmake_minimum_required(VERSION 3.14)
-=======
 cmake_minimum_required(VERSION 2.8.12...3.20)
->>>>>>> 3340d1cf85f2c917eba29d179854c24a31dd37e2
 
 project(enet)
 
